@@ -46,12 +46,12 @@ Q_{\mu\nu}(\mathbf{k})=
 ~~~
 
 Its real part is the Quantum Metric
-$g_{\mu\nu}=\operatorname{Re}Q_{\mu\nu}$, and its antisymmetric imaginary
+$g_{\mu\nu}=\mathrm{Re}Q_{\mu\nu}$, and its antisymmetric imaginary
 part gives the Berry curvature $\Omega$.  They obey the pointwise geometric
 bound
 
 ~~~math
-\operatorname{Tr}g(\mathbf{k})\geq |\Omega(\mathbf{k})|.
+\mathrm{Tr}g(\mathbf{k})\geq |\Omega(\mathbf{k})|.
 ~~~
 
 An ideal Chern band saturates this trace condition throughout the Brillouin
@@ -61,7 +61,7 @@ limit through the residual trace
 
 ~~~math
 \eta=\int_{\mathrm{BZ}}
-[\operatorname{Tr}g(\mathbf{k})-|\Omega(\mathbf{k})|]\,d^2k,
+[\mathrm{Tr}g(\mathbf{k})-|\Omega(\mathbf{k})|]\,d^2k,
 ~~~
 
 and reports an integrated ideal fraction, which approaches one as the
@@ -141,17 +141,17 @@ The calculation is one linear sequence.
    The three distances determine the full quantum metric after accounting for
    the angle between the two reciprocal-lattice directions.  The reported
    trace is therefore the physical quantity
-   $\operatorname{Tr}g(\mathbf{k})=g_{xx}(\mathbf{k})+g_{yy}(\mathbf{k})$,
+   $\mathrm{Tr}g(\mathbf{k})=g_{xx}(\mathbf{k})+g_{yy}(\mathbf{k})$,
    not the sum of diagonal components in the oblique lattice coordinates.
    For the C3-symmetric tMBG case, the locally saturating ideal component is
    $g_{\mathrm{ideal}}(\mathbf{k})=|\Omega(\mathbf{k})|I/2$.  The intrinsic
    metric is written as
    $g_{\mathrm{intrinsic}}=g_{\mathrm{ideal}}+g_{\mathrm{residual}}$.
    The saved integrated diagnostics are the residual trace
-   $\eta=\int_{\mathrm{BZ}}\operatorname{Tr}g_{\mathrm{residual}}d^2k$
+   $\eta=\int_{\mathrm{BZ}}\mathrm{Tr}g_{\mathrm{residual}}d^2k$
    and the ideal fraction $f_{\mathrm{ideal}}=I_{\Omega}/I_g$, with
    $I_{\Omega}=\int_{\mathrm{BZ}}|\Omega|d^2k$ and
-   $I_g=\int_{\mathrm{BZ}}\operatorname{Tr}g_{\mathrm{intrinsic}}d^2k$.
+   $I_g=\int_{\mathrm{BZ}}\mathrm{Tr}g_{\mathrm{intrinsic}}d^2k$.
 
 5. To obtain the momentum-resolved ideal component, the isolated magnetic
    state is lifted into the same six-local-orbital plane-wave Hilbert space as
