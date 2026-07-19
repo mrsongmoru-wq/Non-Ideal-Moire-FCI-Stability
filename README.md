@@ -12,6 +12,20 @@ The implemented and validated case is twisted monolayer-bilayer graphene
 (tMBG) at flux `p/q=1/20`.  No Landau-level expansion, fitted reference
 wavefunction, or external geometry data are used.
 
+## Associated article
+
+This code accompanies and was developed for the numerical analysis in the
+arXiv manuscript:
+
+> Moru Song and Kai Chang, *Fractional Chern Insulators Transition in
+> Non-ideal Flat Bands of Twisted Mono-bilayer Graphene* (2026).
+
+In particular, the repository provides the independent hybrid-Wannier
+calculation of the weak-field magnetic spectrum, the multiband quantum
+geometry and trace condition of the isolated magnetic subband, and the
+momentum-resolved ideal-component distribution discussed in that work.  An
+arXiv identifier and direct article link will be added here once assigned.
+
 ## Origin, license, and scope
 
 This project is based on Xiaoyu Wang's
