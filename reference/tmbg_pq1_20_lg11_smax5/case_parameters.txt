@@ -1,0 +1,10 @@
+system=tMBG
+theta_deg=1.04
+kappa=0.70
+displacement_potential_meV=50.0
+hBN_sublattice_potential_meV=-30.0
+flux_p=1
+flux_q=20
+reciprocal_grid_lg=11
+magnetic_translation_smax=5
+active_band_count=6

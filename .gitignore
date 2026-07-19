@@ -1,0 +1,12 @@
+/results/
+/outputs/
+/Manifest.toml
+*.jls
+*.npz
+__pycache__/
+*.pyc
+
+# Keep unpublished diagnostics outside the repository.  These patterns are a
+# second guard if a local private analysis is temporarily copied here.
+/private/
+/private_*/
