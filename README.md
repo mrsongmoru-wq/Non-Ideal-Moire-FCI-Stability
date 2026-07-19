@@ -1,11 +1,13 @@
-# tMBG magnetic hybrid-Wannier spectrum and geometry
+# Hyperlinear Check for FCI Non-Ideal Flat-Band Stability
 
-This Julia package implements a self-contained hybrid-Wannier calculation of
-the magnetic spectrum and quantum geometry of twisted monolayer-bilayer
-graphene (tMBG).  The paper example constructs the magnetic Hilbert space from
-zero-field continuum-model bands, solves the generalized magnetic eigenproblem,
-and extracts the ideal component of an isolated magnetic subband through a
-multiband covariant frame.
+**Hyperlinear FCI Stability Check** is a Julia framework for diagnosing FCI
+stability in non-ideal flat bands through magnetic-subband spectroscopy,
+multiband quantum geometry, trace-condition analysis, overlap diagnostics, and
+ideal-component projection.  The currently validated implementation targets
+twisted monolayer-bilayer graphene (tMBG).  Its paper example constructs the
+magnetic Hilbert space from zero-field continuum-model bands, solves the
+generalized magnetic eigenproblem, and extracts the ideal component of an
+isolated magnetic subband through a multiband covariant frame.
 
 ## Origin and scope
 
