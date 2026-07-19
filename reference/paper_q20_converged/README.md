@@ -17,7 +17,11 @@ Key results:
 - Fig. 4 target weight within the central zero-field pair:
   `0.919354982036541`;
 - Fig. 4 C3-averaged K-region weight relative to the map maximum:
-  `0.12760522509466157`.
+  `0.12827514648901675`;
+- raw / symmetry-restored Fig. 4 C3 relative error:
+  `0.12450748406769918` / `6.446235956802648e-17`;
+- relative norm of the removed non-C3 component:
+  `0.07188442944260906`.
 
 For comparison, the otherwise identical `lg=7, smax=3` rebuild gives
 `eta=2.337843720059746e-3` and ideal fraction `0.9996280590073517`.  The

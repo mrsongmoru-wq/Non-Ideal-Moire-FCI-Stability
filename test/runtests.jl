@@ -176,6 +176,10 @@ end
     @test c3_relative_error(symmetric) < 1e-14
     symmetric[2, 1] += 1
     @test c3_relative_error(symmetric) > 0
+    restored = c3_symmetrize(symmetric)
+    @test c3_relative_error(restored) < 1e-14
+    @test sum(restored) ≈ sum(symmetric) atol=1e-12
+    @test norm(restored - symmetric) > 0
 end
 
 @testset "Unitary real-space gauge-transform convention" begin

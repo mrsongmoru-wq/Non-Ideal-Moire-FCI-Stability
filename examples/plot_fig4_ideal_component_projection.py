@@ -118,6 +118,8 @@ def main(data_dir: Path, output_stem: Path) -> None:
     projection = np.genfromtxt(
         data_dir / "upper_component_grid.csv", delimiter=",", names=True
     )
+    if "target_weight_raw" not in (projection.dtype.names or ()):
+        raise RuntimeError("Fig. 4 table does not contain the auditable raw weight")
     dimension = round(np.sqrt(projection.size))
     raw_weight = np.asarray(projection["target_weight"]).reshape(dimension, dimension).T
     relative_weight = raw_weight / np.max(raw_weight)
@@ -247,10 +249,17 @@ def main(data_dir: Path, output_stem: Path) -> None:
         raise RuntimeError("Grid and integrated target-band weights disagree")
     if float(projection_metadata["target_fraction_within_central_pair"]) <= 0.5:
         raise RuntimeError("The separated branch is not dominated by the target band")
+    if float(projection_metadata["target_c3_relative_error"]) > 1e-12:
+        raise RuntimeError("Exported Fig. 4 weight is not C3 covariant")
     print(output_stem.with_suffix(".pdf").resolve())
     print(
         "target_fraction_within_central_pair=",
         projection_metadata["target_fraction_within_central_pair"],
+    )
+    print(
+        "target_c3_raw/restored=",
+        projection_metadata["target_c3_raw_relative_error"],
+        projection_metadata["target_c3_relative_error"],
     )
 
 

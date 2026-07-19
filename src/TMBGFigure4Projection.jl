@@ -85,26 +85,29 @@ end
 
 function write_projection_grid(
     projection::CommonBasisProjection,
+    target_weights::Matrix{Float64},
     result::MagneticHWModel,
     target_local::Int,
     outdir::String,
 )
     l1 = result.l1
-    target_sum = sum(projection.target_weights)
-    target_max = maximum(projection.target_weights)
-    rows = zeros(Float64, l1 * l1, 10)
+    target_sum = sum(target_weights)
+    target_max = maximum(target_weights)
+    rows = zeros(Float64, l1 * l1, 11)
     row = 1
     for i2 in 1:l1, i1 in 1:l1
         k1 = (i1 - 1) / l1
         k2 = (i2 - 1) / l1
         kcart = k1 .* result.model.g1 .+ k2 .* result.model.g2
-        weight = projection.target_weights[i1, i2]
+        raw_weight = projection.target_weights[i1, i2]
+        weight = target_weights[i1, i2]
         rows[row, :] .= [
             k1,
             k2,
             kcart[1],
             kcart[2],
             result.hw.eigvals[target_local, i1, i2],
+            raw_weight,
             weight,
             weight / max(target_sum, eps(Float64)),
             weight / max(target_max, eps(Float64)),
@@ -117,8 +120,9 @@ function write_projection_grid(
     open(grid_path, "w") do io
         println(
             io,
-            "k1_wang,k2_wang,kx,ky,zero_field_energy_meV,target_weight," *
-            "target_probability,target_relative,active_weight,common_weight",
+            "k1_wang,k2_wang,kx,ky,zero_field_energy_meV,target_weight_raw," *
+            "target_weight,target_probability,target_relative,active_weight," *
+            "common_weight",
         )
         writedlm(io, rows, ',')
     end
@@ -206,9 +210,11 @@ Reproduce the momentum-resolved ideal-component projection used in Fig. 4.
 The isolated weak-field magnetic branch is lifted to the common six-orbital
 plane-wave Hilbert space, transformed from the hWF Landau-gauge convention to
 symmetric gauge, and projected onto the true zero-field energy eigenbasis.
-The exported map is the target-band weight normalized by its maximum; the
-91.9% quantity is the integrated target weight within the central zero-field
-pair.
+For the C3-symmetric tMBG model, the exported map is the C3 group projection
+of the target-band weight, normalized by its maximum.  The raw unsymmetrized
+weight is retained in the same table for numerical auditing.  Group projection
+preserves the integrated weight, so the 91.9% target share within the central
+zero-field pair is unchanged.
 """
 function write_figure4_projection(
     result::MagneticHWModel,
@@ -227,9 +233,16 @@ function write_figure4_projection(
         transform_method=:fft,
         translation_start=-div(result.l1, 2),
     )
+    target_weights_c3 = c3_symmetrize(projection.target_weights)
     serialize(joinpath(outdir, "figure4_projection.jls"), projection)
     grid_path, source_path =
-        write_projection_grid(projection, result, target_local, outdir)
+        write_projection_grid(
+            projection,
+            target_weights_c3,
+            result,
+            target_local,
+            outdir,
+        )
     kpoint_path, energy_path, path_metadata = write_zero_field_path(
         result,
         target_local,
@@ -237,7 +250,7 @@ function write_figure4_projection(
         total_points=total_path_points,
     )
 
-    target_max = maximum(projection.target_weights)
+    target_max = maximum(target_weights_c3)
     gamma_index = (
         nearest_grid_index(2 / 3, result.l1),
         nearest_grid_index(1 / 3, result.l1),
@@ -269,7 +282,13 @@ function write_figure4_projection(
             "$(projection.target_fraction_within_active)",
         )
         println(io, "target_fraction_within_central_pair=$central_pair_fraction")
-        println(io, "target_c3_relative_error=$(c3_relative_error(projection.target_weights))")
+        raw_c3_error = c3_relative_error(projection.target_weights)
+        restored_c3_error = c3_relative_error(target_weights_c3)
+        c3_correction = norm(target_weights_c3 - projection.target_weights) /
+                        max(norm(projection.target_weights), eps(Float64))
+        println(io, "target_c3_raw_relative_error=$raw_c3_error")
+        println(io, "target_c3_relative_error=$restored_c3_error")
+        println(io, "target_c3_relative_correction=$c3_correction")
         println(io, "raw_metric_error_max=$(maximum(projection.raw_metric_errors))")
         for (label, index) in (
             ("Gamma", gamma_index),
@@ -277,8 +296,8 @@ function write_figure4_projection(
             ("M", m_index),
             ("Kprime", kprime_index),
         )
-            weight = projection.target_weights[index...]
-            orbit_average = c3_orbit_average(projection.target_weights, index)
+            weight = target_weights_c3[index...]
+            orbit_average = c3_orbit_average(target_weights_c3, index)
             println(io, "$(label)_target_weight=$weight")
             println(io, "$(label)_c3_orbit_average=$orbit_average")
             println(
