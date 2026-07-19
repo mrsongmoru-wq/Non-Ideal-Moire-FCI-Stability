@@ -17,14 +17,15 @@ wavefunction, or external geometry data are used.
 This code accompanies and was developed for the numerical analysis in the
 arXiv manuscript:
 
-> Moru Song and Kai Chang, *Fractional Chern Insulators Transition in
-> Non-ideal Flat Bands of Twisted Mono-bilayer Graphene* (2026).
+> Moru Song and Kai Chang,
+> *[Fractional Chern Insulators Transition in Non-ideal Flat Bands of Twisted
+> Mono-bilayer Graphene](https://arxiv.org/abs/2511.12231)*,
+> arXiv:2511.12231 [cond-mat.mes-hall] (2025).
 
 In particular, the repository provides the independent hybrid-Wannier
 calculation of the weak-field magnetic spectrum, the multiband quantum
 geometry and trace condition of the isolated magnetic subband, and the
-momentum-resolved ideal-component distribution discussed in that work.  An
-arXiv identifier and direct article link will be added here once assigned.
+momentum-resolved ideal-component distribution discussed in that work.
 
 ## Origin, license, and scope
 
