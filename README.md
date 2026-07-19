@@ -1,16 +1,79 @@
 # Non-Ideal Band FCI Stability
 
-This repository provides an independent hybrid-Wannier workflow for testing
-the single-particle ingredients of fractional Chern-insulator stability in a
-non-ideal flat band.  Starting from a continuum Hamiltonian, the code
-constructs magnetic subbands, exports their spectrum, evaluates the Berry
-curvature and quantum metric of an isolated target subband, records
-the trace-condition result and overlap diagnostics, and resolves the target
-state into its momentum-dependent ideal component.
+## Purpose and physical background
 
-The implemented and validated case is twisted monolayer-bilayer graphene
-(tMBG) at flux `p/q=1/20`.  No Landau-level expansion, fitted reference
-wavefunction, or external geometry data are used.
+Establishing a fractional Chern insulator (FCI) normally requires a
+strongly-correlated many-body calculation, such as exact diagonalization or
+DMRG, because the FCI is an interacting many-electron phase.  This repository
+provides a complementary diagnostic at the single-electron continuum-model
+level.  It asks whether a non-ideal zero-field flat band contains a latent
+near-ideal Chern component that supplies favorable single-particle geometry
+for an FCI.  The many-body calculation establishes the phase itself; the code
+here detects, characterizes, and locates its candidate ideal component.
+
+The central procedure proposed in the associated article is:
+
+1. Construct the zero-field non-ideal band directly from the continuum
+   Hamiltonian.
+2. Add a weak perpendicular magnetic field.  The field mixes nearby momenta
+   and resolves components embedded in the same zero-field Bloch band into
+   distinct magnetic subbands.  This weak-field resolution is the
+   single-particle **color-separation probe**.
+3. Select the separated subband with near-ideal quantum geometry and compute
+   its Chern number, Berry curvature, Quantum Metric, trace condition, and
+   multiband overlap diagnostics.
+4. Lift that magnetic subband into a common plane-wave Hilbert space, convert
+   it to symmetric gauge, and project it onto the true zero-field energy
+   eigenbasis.  This produces the momentum-resolved distribution of the ideal
+   component inside the original zero-field non-ideal band.
+
+Thus the magnetic field is a controlled resolution tool: the object being
+tested is the original non-ideal band, and the final output identifies where
+its potential ideal component is distributed at zero field.  The implemented
+and validated example is twisted monolayer-bilayer graphene (tMBG) at
+`p/q=1/20`.  No Landau-level expansion, fitted reference wavefunction, or
+external geometry data are used.
+
+## What "ideal" means
+
+For a rank-one Chern band, the quantum geometric tensor is
+
+$$
+Q_{\mu\nu}(\mathbf{k})=
+\langle \partial_{k_\mu}u_{\mathbf{k}}|
+(1-|u_{\mathbf{k}}\rangle\langle u_{\mathbf{k}}|)
+|\partial_{k_\nu}u_{\mathbf{k}}\rangle .
+$$
+
+Its real part is the Quantum Metric
+$g_{\mu\nu}=\operatorname{Re}Q_{\mu\nu}$, and its antisymmetric imaginary
+part gives the Berry curvature $\Omega$.  They obey the pointwise geometric
+bound
+
+$$
+\operatorname{Tr}g(\mathbf{k})\geq |\Omega(\mathbf{k})|.
+$$
+
+An ideal Chern band saturates this trace condition throughout the Brillouin
+zone.  Under C3 symmetry, the locally saturating component used here is
+$g_{\mathrm{ideal}}=|\Omega|I/2$.  The code measures the departure from this
+limit through the residual trace
+
+$$
+\eta=\int_{\mathrm{BZ}}
+[\operatorname{Tr}g(\mathbf{k})-|\Omega(\mathbf{k})|]\,d^2k,
+$$
+
+and reports an integrated ideal fraction, which approaches one as the
+residual contribution vanishes.  Berry-curvature uniformity is a useful
+additional diagnostic, but pointwise trace saturation is the ideality
+criterion used by this workflow.
+
+This geometry has a constructive meaning.  The exact Landau-level mapping of
+ideal flat bands and the vortexability criterion show when vortex attachment
+can be carried out within the band subspace, providing the single-particle
+structure needed to build FCI wavefunctions.  This is the physical reason the
+repository uses ideal-component geometry as its FCI-stability diagnostic.
 
 ## Associated article
 
@@ -253,6 +316,21 @@ and C3 group projection.
   Mono-bilayer Graphene](https://arxiv.org/abs/2511.12231)*,
   arXiv:2511.12231 [cond-mat.mes-hall] (2025), the article accompanied by this
   repository.
+- Jie Wang, Jennifer Cano, Andrew J. Millis, Zhao Liu, and Bo Yang,
+  *[Exact Landau Level Description of Geometry and Interaction in a
+  Flatband](https://doi.org/10.1103/PhysRevLett.127.246403)*, Phys. Rev. Lett.
+  **127**, 246403 (2021), the exact ideal-flat-band/Landau-level mapping.
+- Patrick J. Ledwith, Ashvin Vishwanath, and Daniel E. Parker,
+  *[Vortexability: A Unifying Criterion for Ideal Fractional Chern
+  Insulators](https://doi.org/10.1103/PhysRevB.108.205144)*, Phys. Rev. B
+  **108**, 205144 (2023), the constructive ideal-band criterion underlying
+  the stability diagnostic.
+- Manato Fujimoto, Daniel E. Parker, Junkai Dong, Eslam Khalaf, Ashvin
+  Vishwanath, and Patrick Ledwith, *[Higher Vortexability: Zero-Field
+  Realization of Higher Landau
+  Levels](https://doi.org/10.1103/PhysRevLett.134.106502)*, Phys. Rev. Lett.
+  **134**, 106502 (2025), the extension beyond the lowest-Landau-level ideal
+  structure.
 - Zhen Ma, Shuai Li, Ya-Wen Zheng, Meng-Meng Xiao, Hua Jiang, Jin-Hua Gao,
   and X. C. Xie, *[Topological flat bands in twisted trilayer
   graphene](https://doi.org/10.1016/j.scib.2020.10.004)*, Science Bulletin
@@ -266,6 +344,3 @@ and C3 group projection.
 - Xiaoyu Wang and Oskar Vafek, *Revisiting Bloch electrons in a magnetic
   field: Hofstadter physics via hybrid Wannier states*, Phys. Rev. B **108**,
   245109 (2023).
-- Patrick J. Ledwith, Ashvin Vishwanath, and Daniel E. Parker,
-  *Vortexability: A Unifying Criterion for Ideal Fractional Chern
-  Insulators*, Phys. Rev. B **108**, 205144 (2023).
