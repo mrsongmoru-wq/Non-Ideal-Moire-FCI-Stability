@@ -38,31 +38,31 @@ external geometry data are used.
 
 For a rank-one Chern band, the quantum geometric tensor is
 
-$$
+~~~math
 Q_{\mu\nu}(\mathbf{k})=
 \langle \partial_{k_\mu}u_{\mathbf{k}}|
 (1-|u_{\mathbf{k}}\rangle\langle u_{\mathbf{k}}|)
 |\partial_{k_\nu}u_{\mathbf{k}}\rangle .
-$$
+~~~
 
 Its real part is the Quantum Metric
 $g_{\mu\nu}=\operatorname{Re}Q_{\mu\nu}$, and its antisymmetric imaginary
 part gives the Berry curvature $\Omega$.  They obey the pointwise geometric
 bound
 
-$$
+~~~math
 \operatorname{Tr}g(\mathbf{k})\geq |\Omega(\mathbf{k})|.
-$$
+~~~
 
 An ideal Chern band saturates this trace condition throughout the Brillouin
 zone.  Under C3 symmetry, the locally saturating component used here is
 $g_{\mathrm{ideal}}=|\Omega|I/2$.  The code measures the departure from this
 limit through the residual trace
 
-$$
+~~~math
 \eta=\int_{\mathrm{BZ}}
 [\operatorname{Tr}g(\mathbf{k})-|\Omega(\mathbf{k})|]\,d^2k,
-$$
+~~~
 
 and reports an integrated ideal fraction, which approaches one as the
 residual contribution vanishes.  Berry-curvature uniformity is a useful
@@ -125,33 +125,33 @@ The calculation is one linear sequence.
    physical rank followed by `O(k)^(-1/2)` gives the orthonormal magnetic
    Hamiltonian and its complete subband spectrum.
 3. The isolated target magnetic subband is put first in a local multiband
-   correction frame `Phi(k)`.  Nearby subbands stabilize the frame but are not
-   merged into the target projector.  For neighboring momenta,
-
-       M(k,k+dk) = Phi(k)' T(dk) Phi(k+dk)
-
-   is lifted to a common plane-wave Hilbert space.  If `M = W S V'`, its polar
-   part `U = W V'` defines the covariant transport and `U[1,1]` is the target
-   link.  This separates the intrinsic target geometry from nonunitary
-   distortion caused by a finite hybrid-Wannier frame.
+   correction frame $\Phi(\mathbf{k})$.  Nearby subbands stabilize the frame
+   but are not merged into the target projector.  For neighboring momenta,
+   the link matrix $M$ is constructed from
+   $\Phi_{\mathbf{k}}^\dagger T_{\delta\mathbf{k}}\Phi_{\mathbf{k}+\delta\mathbf{k}}$
+   and lifted to a common plane-wave Hilbert space.  Here
+   $\Phi_{\mathbf{k}}\equiv\Phi(\mathbf{k})$ and
+   $T_{\delta\mathbf{k}}\equiv T(\delta\mathbf{k})$.  If
+   $M=WSV^\dagger$, its polar part $U=WV^\dagger$ defines the covariant
+   transport, and $U_{11}$ is the target link.  This separates the intrinsic
+   target geometry from nonunitary distortion caused by a finite
+   hybrid-Wannier frame.
 4. Wilson plaquettes of the target links give the Berry curvature.  Projector
    distances are evaluated along both reciprocal steps and their difference.
    The three distances determine the full quantum metric after accounting for
    the angle between the two reciprocal-lattice directions.  The reported
-   trace is therefore the physical
-
-       Tr g(k) = g_xx(k) + g_yy(k),
-
-   not the sum of diagonal components in the oblique lattice coordinates.  For
-   the C3-symmetric tMBG case, the locally saturating Kahler component is
-
-       g_ideal(k) = |Omega(k)| I / 2.
-
-   The intrinsic metric is written as
-   `g_intrinsic = g_ideal + g_residual`.  The saved integrated diagnostics are
-
-       eta = integral Tr(g_residual),
-       ideal_fraction = integral |Omega| / integral Tr(g_intrinsic).
+   trace is therefore the physical quantity
+   $\operatorname{Tr}g(\mathbf{k})=g_{xx}(\mathbf{k})+g_{yy}(\mathbf{k})$,
+   not the sum of diagonal components in the oblique lattice coordinates.
+   For the C3-symmetric tMBG case, the locally saturating ideal component is
+   $g_{\mathrm{ideal}}(\mathbf{k})=|\Omega(\mathbf{k})|I/2$.  The intrinsic
+   metric is written as
+   $g_{\mathrm{intrinsic}}=g_{\mathrm{ideal}}+g_{\mathrm{residual}}$.
+   The saved integrated diagnostics are the residual trace
+   $\eta=\int_{\mathrm{BZ}}\operatorname{Tr}g_{\mathrm{residual}}d^2k$
+   and the ideal fraction $f_{\mathrm{ideal}}=I_{\Omega}/I_g$, with
+   $I_{\Omega}=\int_{\mathrm{BZ}}|\Omega|d^2k$ and
+   $I_g=\int_{\mathrm{BZ}}\operatorname{Tr}g_{\mathrm{intrinsic}}d^2k$.
 
 5. To obtain the momentum-resolved ideal component, the isolated magnetic
    state is lifted into the same six-local-orbital plane-wave Hilbert space as
@@ -173,17 +173,31 @@ controlled separately by `smax=5`.
 ## Code flow used by the calculation
 
 There is only one numerical entry point:
-`examples/run_tmbg_stability_check.jl`.  It calls the source files in the
-following order; these are stages of one calculation, not alternative
-methods.
+`examples/run_tmbg_stability_check.jl`.  It executes the following five stages
+in order.  They are parts of one calculation, not alternative methods.
 
-| Stage | Source code and main call | Result |
-| --- | --- | --- |
-| Continuum model | `TMBGZeroField.jl`, `WangContinuum.jl`; `build_tmbg_wang` | tMBG Hamiltonian, lattice, plane-wave basis, and field coupling |
-| Hybrid-Wannier basis | `TMBGHybridWannier.jl`; called inside `build_magnetic_hw` | Six-band zero-field hybrid-Wannier basis |
-| Magnetic spectrum | `TMBGMagneticHW.jl`; `build_magnetic_hw` | Nonorthogonal magnetic problem, orthonormalized subbands, and `magnetic_spectrum.csv` |
-| Multiband quantum geometry | `TMBGCommonBasis.jl`, `TMBGMagneticGeometry.jl`, `TMBGIntrinsicIdealGeometry.jl`, and `TMBGIdealComponent.jl`; `compute_ideal_component` | Berry curvature, quantum metric, trace condition, and overlap diagnostics |
-| Momentum-resolved ideal component | `TMBGProjection.jl`, `TMBGSymmetricGaugeProjection.jl`, and `TMBGIdealComponentProjection.jl`; `write_ideal_component_projection` | Common-basis zero-field projection and C3-restored ideal-component distribution |
+1. **Continuum model.** `TMBGZeroField.jl` and `WangContinuum.jl` call
+   `build_tmbg_wang` to construct the tMBG Hamiltonian, lattice, plane-wave
+   basis, and field coupling.
+
+2. **Hybrid-Wannier basis.** `TMBGHybridWannier.jl` is called inside
+   `build_magnetic_hw` to construct the six-band zero-field hybrid-Wannier
+   basis.
+
+3. **Magnetic spectrum.** `TMBGMagneticHW.jl` calls `build_magnetic_hw` to
+   solve the nonorthogonal magnetic problem and export the orthonormalized
+   subbands to `magnetic_spectrum.csv`.
+
+4. **Multiband quantum geometry.** `TMBGCommonBasis.jl`,
+   `TMBGMagneticGeometry.jl`, `TMBGIntrinsicIdealGeometry.jl`, and
+   `TMBGIdealComponent.jl` call `compute_ideal_component` to obtain the Berry
+   curvature, Quantum Metric, trace condition, and overlap diagnostics.
+
+5. **Momentum-resolved ideal component.** `TMBGProjection.jl`,
+   `TMBGSymmetricGaugeProjection.jl`, and
+   `TMBGIdealComponentProjection.jl` call
+   `write_ideal_component_projection` to produce the common-basis zero-field
+   projection and the C3-restored ideal-component distribution.
 
 `src/TMBGMagneticHybridWannier.jl` only assembles these modules into the Julia
 package.  The two Python files do not perform any physics calculation:
@@ -325,12 +339,6 @@ and C3 group projection.
   Insulators](https://doi.org/10.1103/PhysRevB.108.205144)*, Phys. Rev. B
   **108**, 205144 (2023), the constructive ideal-band criterion underlying
   the stability diagnostic.
-- Manato Fujimoto, Daniel E. Parker, Junkai Dong, Eslam Khalaf, Ashvin
-  Vishwanath, and Patrick Ledwith, *[Higher Vortexability: Zero-Field
-  Realization of Higher Landau
-  Levels](https://doi.org/10.1103/PhysRevLett.134.106502)*, Phys. Rev. Lett.
-  **134**, 106502 (2025), the extension beyond the lowest-Landau-level ideal
-  structure.
 - Zhen Ma, Shuai Li, Ya-Wen Zheng, Meng-Meng Xiao, Hua Jiang, Jin-Hua Gao,
   and X. C. Xie, *[Topological flat bands in twisted trilayer
   graphene](https://doi.org/10.1016/j.scib.2020.10.004)*, Science Bulletin
