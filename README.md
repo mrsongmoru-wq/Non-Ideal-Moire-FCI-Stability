@@ -1,6 +1,6 @@
-# Hyperlinear Check for FCI Non-Ideal Flat-Band Stability
+# Hybrid-Wannier Check for FCI Non-Ideal Flat-Band Stability
 
-**Hyperlinear FCI Stability Check** is a Julia framework for diagnosing FCI
+**Hybrid-Wannier FCI Stability Check** is a Julia framework for diagnosing FCI
 stability in non-ideal flat bands through magnetic-subband spectroscopy,
 multiband quantum geometry, trace-condition analysis, overlap diagnostics, and
 ideal-component projection.  The currently validated implementation targets
