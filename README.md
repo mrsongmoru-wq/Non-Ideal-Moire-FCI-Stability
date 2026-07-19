@@ -11,6 +11,38 @@ near-ideal Chern component that supplies favorable single-particle geometry
 for an FCI.  The many-body calculation establishes the phase itself; the code
 here detects, characterizes, and locates its candidate ideal component.
 
+### Why the non-ideal problem is essential
+
+The ideal trace condition is a constructive reference point, not a realistic
+material requirement.  It makes the Landau-level mapping and vortex
+attachment exact, but continuum models of moiré materials also contain
+lattice relaxation, remote hopping, displacement fields, and substrate
+potentials.  These ingredients generically produce Berry-curvature
+inhomogeneity and finite trace-condition violation.  A diagnostic restricted
+to globally ideal bands would therefore omit much of the experimentally
+accessible parameter space before asking whether correlations can stabilize
+an FCI.
+
+The associated tMBG article gives a concrete example.  As the relaxation
+parameter crosses $\kappa_c\simeq0.55$, the non-interacting parent band remains
+$C=2$, while its global quantum geometry degrades and its hybrid-Wannier flow
+develops a local geometric instability.  Exact diagonalization nevertheless
+finds a transition from a Halperin-(112)-like phase to a Laughlin-like
+$1/3$ FCI.  The latter persists on the strongly non-ideal side, so its origin
+is not captured by assigning one global ideality score to the entire parent
+band.
+
+The relevant question is instead component resolved.  A non-ideal Bloch band
+can contain sectors with sharply different quantum geometry.  In the tMBG
+regime studied here, interactions favor a hidden near-ideal $C=1$ component
+embedded in the non-ideal $C=2$ zero-field states, while its strongly
+non-ideal partner contributes much less to the Laughlin-like state.  The weak
+magnetic field does not create this favorable component: it resolves the
+pre-existing components into separate magnetic subbands, after which the
+near-ideal branch can be characterized and projected back onto the original
+zero-field band.  This extends ideal-band design principles into a practical
+diagnostic for realistic non-ideal moiré bands.
+
 The central procedure proposed in the associated article is:
 
 1. Construct the zero-field non-ideal band directly from the continuum
