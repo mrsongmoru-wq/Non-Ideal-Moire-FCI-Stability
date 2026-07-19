@@ -248,6 +248,16 @@ and C3 group projection.
 
 ## Method references
 
+- Moru Song and Kai Chang,
+  *[Fractional Chern Insulators Transition in Non-ideal Flat Bands of Twisted
+  Mono-bilayer Graphene](https://arxiv.org/abs/2511.12231)*,
+  arXiv:2511.12231 [cond-mat.mes-hall] (2025), the article accompanied by this
+  repository.
+- Zhen Ma, Shuai Li, Ya-Wen Zheng, Meng-Meng Xiao, Hua Jiang, Jin-Hua Gao,
+  and X. C. Xie, *[Topological flat bands in twisted trilayer
+  graphene](https://doi.org/10.1016/j.scib.2020.10.004)*, Science Bulletin
+  **66**, 18-22 (2021), the six-orbital tMBG continuum-Hamiltonian and
+  realistic bilayer-hopping reference used in `src/TMBGZeroField.jl`.
 - Xiaoyu Wang,
   [`Hofstadter-TBG`](https://github.com/xywang2017/Hofstadter-TBG), the
   upstream GPL-3.0 hybrid-Wannier implementation.
