@@ -1,10 +1,10 @@
-# Non-Ideal FCI Stability Check
+# Non-Ideal Band FCI Stability
 
 This repository provides an independent hybrid-Wannier workflow for testing
 the single-particle ingredients of fractional Chern-insulator stability in a
-non-ideal magnetic flat band.  Starting from a continuum Hamiltonian, the code
+non-ideal flat band.  Starting from a continuum Hamiltonian, the code
 constructs magnetic subbands, exports their spectrum, evaluates the Berry
-curvature and Cartesian quantum metric of an isolated target subband, records
+curvature and quantum metric of an isolated target subband, records
 the trace-condition result and overlap diagnostics, and resolves the target
 state into its momentum-dependent ideal component.
 
@@ -73,9 +73,9 @@ The calculation is one linear sequence.
    distortion caused by a finite hybrid-Wannier frame.
 4. Wilson plaquettes of the target links give the Berry curvature.  Projector
    distances are evaluated along both reciprocal steps and their difference.
-   The three distances determine the full metric tensor after transforming the
-   nonorthogonal reciprocal coordinates to Cartesian `x,y` coordinates.  The
-   reported trace is therefore the physical
+   The three distances determine the full quantum metric after accounting for
+   the angle between the two reciprocal-lattice directions.  The reported
+   trace is therefore the physical
 
        Tr g(k) = g_xx(k) + g_yy(k),
 
@@ -119,7 +119,7 @@ methods.
 | Continuum model | `TMBGZeroField.jl`, `WangContinuum.jl`; `build_tmbg_wang` | tMBG Hamiltonian, lattice, plane-wave basis, and field coupling |
 | Hybrid-Wannier basis | `TMBGHybridWannier.jl`; called inside `build_magnetic_hw` | Six-band zero-field hybrid-Wannier basis |
 | Magnetic spectrum | `TMBGMagneticHW.jl`; `build_magnetic_hw` | Nonorthogonal magnetic problem, orthonormalized subbands, and `magnetic_spectrum.csv` |
-| Multiband quantum geometry | `TMBGCommonBasis.jl`, `TMBGMagneticGeometry.jl`, `TMBGIntrinsicIdealGeometry.jl`, and `TMBGIdealComponent.jl`; `compute_ideal_component` | Berry curvature, Cartesian quantum metric, trace condition, and overlap diagnostics |
+| Multiband quantum geometry | `TMBGCommonBasis.jl`, `TMBGMagneticGeometry.jl`, `TMBGIntrinsicIdealGeometry.jl`, and `TMBGIdealComponent.jl`; `compute_ideal_component` | Berry curvature, quantum metric, trace condition, and overlap diagnostics |
 | Momentum-resolved ideal component | `TMBGProjection.jl`, `TMBGSymmetricGaugeProjection.jl`, and `TMBGIdealComponentProjection.jl`; `write_ideal_component_projection` | Common-basis zero-field projection and C3-restored ideal-component distribution |
 
 `src/TMBGMagneticHybridWannier.jl` only assembles these modules into the Julia
@@ -159,7 +159,7 @@ writes, in order:
 - `trace_condition_summary.txt`: Chern numbers, integrated trace condition,
   and ideal fraction;
 - `quantum_geometry.csv`: local Berry curvature and ideal, residual, and
-  intrinsic Cartesian quantum metrics;
+  intrinsic quantum metrics;
 - `overlap_diagnostics.csv` and `overlap_diagnostics_summary.txt`: raw and
   covariant target links and multiband-frame singular-value distributions;
 - `ideal_component_projection/momentum_resolved_target_weight.csv`: raw and
@@ -242,8 +242,9 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
 The tests cover lattice-coordinate conventions, continuum-basis equivalence,
-magnetic overlap and Hamiltonian hermiticity, Cartesian metric reconstruction,
-multiband polar-frame covariance, and C3 group projection.
+magnetic overlap and Hamiltonian hermiticity, quantum-metric reconstruction
+from nonorthogonal reciprocal coordinates, multiband polar-frame covariance,
+and C3 group projection.
 
 ## Method references
 
