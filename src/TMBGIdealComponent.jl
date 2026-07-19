@@ -11,10 +11,10 @@ using ..TMBGMagneticGeometry
 using ..TMBGIntrinsicIdealGeometry
 
 export IdealComponentResult,
-       select_paper_target_band,
+       select_isolated_target_band,
        compute_ideal_component,
-       write_ideal_component,
-       write_overlap_distribution
+       write_trace_condition_results,
+       write_overlap_diagnostics
 
 """
 Geometry of one target magnetic subband after a multiband correction frame
@@ -59,7 +59,7 @@ struct IdealComponentResult
     plaquette_area::Float64
 end
 
-function select_paper_target_band(result::MagneticHWModel)
+function select_isolated_target_band(result::MagneticHWModel)
     _, upper = select_target_upper_group(
         result.spectrum,
         result.flux.q;
@@ -228,7 +228,7 @@ curvature follows from its Wilson plaquette.  Three projector distances along
 `delta1`, `delta2`, and `delta2-delta1` determine the Cartesian residual
 metric, including the angle between reciprocal-lattice directions.
 
-For the C3-symmetric paper model, the local Kähler component is uniquely
+For the C3-symmetric tMBG model, the local Kähler component is uniquely
 `g_ideal = |Omega| I/2`.  The reported intrinsic metric is the sum of this
 ideal component and the covariant residual.  Consequently
 `eta = integral Tr(g_residual)` and the ideal fraction is
@@ -236,7 +236,7 @@ ideal component and the covariant residual.  Consequently
 """
 function compute_ideal_component(
     result::MagneticHWModel;
-    target_band::Int=select_paper_target_band(result),
+    target_band::Int=select_isolated_target_band(result),
     correction_bands::Vector{Int}=[target_band - 1],
     reciprocal_shift_periodic::Bool=result.model.periodic_G,
     translation_start::Int=-div(result.l1, 2),
@@ -336,9 +336,15 @@ function compute_ideal_component(
         delta2,
     )
 
-    ideal_xx = abs.(covariant.curvature) ./ 2
-    ideal_yy = copy(ideal_xx)
-    ideal_xy = zeros(Float64, l1, l2)
+    ideal_xx = zeros(Float64, l1, l2)
+    ideal_yy = similar(ideal_xx)
+    ideal_xy = similar(ideal_xx)
+    for index in eachindex(covariant.curvature)
+        ideal_metric = c3_kahler_metric(covariant.curvature[index])
+        ideal_xx[index] = ideal_metric[1, 1]
+        ideal_yy[index] = ideal_metric[2, 2]
+        ideal_xy[index] = ideal_metric[1, 2]
+    end
     intrinsic_xx = ideal_xx .+ covariant.metric_xx
     intrinsic_yy = ideal_yy .+ covariant.metric_yy
     intrinsic_xy = ideal_xy .+ covariant.metric_xy
@@ -401,14 +407,14 @@ function compute_ideal_component(
     )
 end
 
-function write_ideal_component(
+function write_trace_condition_results(
     geometry::IdealComponentResult,
     result::MagneticHWModel,
     output_directory::String,
 )
     mkpath(output_directory)
-    summary_path = joinpath(output_directory, "ideal_component_summary.txt")
-    csv_path = joinpath(output_directory, "ideal_component_geometry.csv")
+    summary_path = joinpath(output_directory, "trace_condition_summary.txt")
+    csv_path = joinpath(output_directory, "quantum_geometry.csv")
     open(summary_path, "w") do io
         println(io, "method=multiband_polar_frame_plus_C3_Kahler_component")
         println(io, "p=$(result.flux.p)")
@@ -476,14 +482,14 @@ Write every target-link modulus and correction-frame singular value on the
 magnetic Brillouin-zone mesh.  These data expose the full overlap distribution
 behind the ideal-component calculation rather than only its extrema.
 """
-function write_overlap_distribution(
+function write_overlap_diagnostics(
     geometry::IdealComponentResult,
     result::MagneticHWModel,
     output_directory::String,
 )
     mkpath(output_directory)
-    csv_path = joinpath(output_directory, "overlap_distribution.csv")
-    summary_path = joinpath(output_directory, "overlap_distribution_summary.txt")
+    csv_path = joinpath(output_directory, "overlap_diagnostics.csv")
+    summary_path = joinpath(output_directory, "overlap_diagnostics_summary.txt")
     l1, l2 = size(geometry.raw_link1_abs)
     open(csv_path, "w") do io
         println(

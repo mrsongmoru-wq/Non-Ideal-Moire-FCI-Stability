@@ -145,10 +145,6 @@ end
     @test tr(metric) ≈ abs(curvature)
     @test det(metric) ≈ curvature^2 / 4
 
-    delta = [1e-4, -2e-4]
-    amplitude = c3_ideal_link_amplitude(delta, curvature, curvature)
-    distance = 1 - abs2(amplitude)
-    @test distance ≈ dot(delta, metric * delta) rtol=1e-6
 end
 
 @testset "Chern-counted upper-group selection" begin

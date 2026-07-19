@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reproduce the path-and-hexagon ideal-component distribution of Fig. 4."""
+"""Plot the momentum-resolved ideal-component distribution of the magnetic subband."""
 
 from __future__ import annotations
 
@@ -110,16 +110,16 @@ def build_hexagonal_map(grid, g1, g2, gamma_reduced, resolution=520):
 
 def main(data_dir: Path, output_stem: Path) -> None:
     path_metadata = read_metadata(data_dir / "zero_field_path_metadata.txt")
-    projection_metadata = read_metadata(data_dir / "metadata.txt")
+    projection_metadata = read_metadata(data_dir / "projection_summary.txt")
     g1 = np.fromstring(path_metadata["g1"], sep=",")
     g2 = np.fromstring(path_metadata["g2"], sep=",")
     gamma_reduced = np.array((2 / 3, 1 / 3))
 
     projection = np.genfromtxt(
-        data_dir / "upper_component_grid.csv", delimiter=",", names=True
+        data_dir / "momentum_resolved_target_weight.csv", delimiter=",", names=True
     )
     if "target_weight_raw" not in (projection.dtype.names or ()):
-        raise RuntimeError("Fig. 4 table does not contain the auditable raw weight")
+        raise RuntimeError("Ideal-component table does not contain the auditable raw weight")
     dimension = round(np.sqrt(projection.size))
     raw_weight = np.asarray(projection["target_weight"]).reshape(dimension, dimension).T
     relative_weight = raw_weight / np.max(raw_weight)
@@ -127,7 +127,7 @@ def main(data_dir: Path, output_stem: Path) -> None:
     norm, cmap = Normalize(vmin=vmin, vmax=vmax), plt.get_cmap("Reds")
 
     path = np.genfromtxt(
-        data_dir / "zero_field_path_kpoints.csv", delimiter=",", names=True
+        data_dir / "zero_field_path_momenta.csv", delimiter=",", names=True
     )
     energies = np.loadtxt(
         data_dir / "zero_field_path_energies.csv", delimiter=",", skiprows=1
@@ -242,7 +242,7 @@ def main(data_dir: Path, output_stem: Path) -> None:
     plt.close(figure)
 
     source_weights = np.genfromtxt(
-        data_dir / "upper_zero_field_band_sources.csv", delimiter=",", names=True
+        data_dir / "zero_field_band_weights.csv", delimiter=",", names=True
     )
     integrated_target = source_weights["weight"][target_local]
     if not np.isclose(raw_weight.sum(), integrated_target, atol=1e-12):
@@ -250,7 +250,7 @@ def main(data_dir: Path, output_stem: Path) -> None:
     if float(projection_metadata["target_fraction_within_central_pair"]) <= 0.5:
         raise RuntimeError("The separated branch is not dominated by the target band")
     if float(projection_metadata["target_c3_relative_error"]) > 1e-12:
-        raise RuntimeError("Exported Fig. 4 weight is not C3 covariant")
+        raise RuntimeError("Exported ideal-component weight is not C3 covariant")
     print(output_stem.with_suffix(".pdf").resolve())
     print(
         "target_fraction_within_central_pair=",
@@ -269,7 +269,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--data-dir",
         type=Path,
-        default=root / "results" / "paper_q20_converged" / "fig4",
+        default=root / "results" / "tmbg_pq1_20_lg11_smax5" / "ideal_component_projection",
     )
     parser.add_argument("--output-stem", type=Path, default=None)
     arguments = parser.parse_args()

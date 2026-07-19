@@ -1,9 +1,7 @@
-module TMBGFigure4Projection
+module TMBGIdealComponentProjection
 
 using DelimitedFiles
 using LinearAlgebra
-using Serialization
-using Statistics
 
 using ..TMBGMagneticHW
 using ..TMBGMagneticHW.TMBGHybridWannier.WangContinuum
@@ -12,7 +10,7 @@ using ..TMBGCommonBasis
 using ..TMBGIdealComponent
 using ..TMBGSymmetricGaugeProjection
 
-export write_figure4_projection
+export write_ideal_component_projection
 
 function distribute_segments(nodes, model, total_points::Int)
     distances = Float64[]
@@ -83,7 +81,7 @@ function c3_orbit_average(weights::Matrix{Float64}, index::Tuple{Int,Int})
     return total / 3
 end
 
-function write_projection_grid(
+function write_momentum_resolved_weights(
     projection::CommonBasisProjection,
     target_weights::Matrix{Float64},
     result::MagneticHWModel,
@@ -116,7 +114,7 @@ function write_projection_grid(
         ]
         row += 1
     end
-    grid_path = joinpath(outdir, "upper_component_grid.csv")
+    grid_path = joinpath(outdir, "momentum_resolved_target_weight.csv")
     open(grid_path, "w") do io
         println(
             io,
@@ -134,7 +132,7 @@ function write_projection_grid(
         projection.source_weights ./
         max(sum(projection.source_weights), eps(Float64)),
     )
-    source_path = joinpath(outdir, "upper_zero_field_band_sources.csv")
+    source_path = joinpath(outdir, "zero_field_band_weights.csv")
     open(source_path, "w") do io
         println(
             io,
@@ -170,7 +168,7 @@ function write_zero_field_path(
         energies[index, :] .= spectrum[active_bands]
     end
 
-    kpoint_path = joinpath(outdir, "zero_field_path_kpoints.csv")
+    kpoint_path = joinpath(outdir, "zero_field_path_momenta.csv")
     path_rows = hcat(
         collect(0:(length(points) - 1)),
         reduce(hcat, points)',
@@ -205,7 +203,7 @@ function write_zero_field_path(
 end
 
 """
-Reproduce the momentum-resolved ideal-component projection used in Fig. 4.
+Write the momentum-resolved ideal-component projection of the isolated magnetic subband.
 
 The isolated weak-field magnetic branch is lifted to the common six-orbital
 plane-wave Hilbert space, transformed from the hWF Landau-gauge convention to
@@ -216,10 +214,10 @@ weight is retained in the same table for numerical auditing.  Group projection
 preserves the integrated weight, so the 91.9% target share within the central
 zero-field pair is unchanged.
 """
-function write_figure4_projection(
+function write_ideal_component_projection(
     result::MagneticHWModel,
     outdir::String;
-    target_band::Int=select_paper_target_band(result),
+    target_band::Int=select_isolated_target_band(result),
     total_path_points::Int=241,
 )
     mkpath(outdir)
@@ -234,9 +232,8 @@ function write_figure4_projection(
         translation_start=-div(result.l1, 2),
     )
     target_weights_c3 = c3_symmetrize(projection.target_weights)
-    serialize(joinpath(outdir, "figure4_projection.jls"), projection)
     grid_path, source_path =
-        write_projection_grid(
+        write_momentum_resolved_weights(
             projection,
             target_weights_c3,
             result,
@@ -267,7 +264,7 @@ function write_figure4_projection(
     central_pair = (target_local - 1):target_local
     central_pair_fraction = projection.source_weights[target_local] /
                             sum(projection.source_weights[central_pair])
-    metadata_path = joinpath(outdir, "metadata.txt")
+    metadata_path = joinpath(outdir, "projection_summary.txt")
     open(metadata_path, "w") do io
         println(io, "method=common_six_orbital_plane_wave_projection")
         println(io, "gauge_transform=exp(-i signB x y / (2 lB^2))")
@@ -310,12 +307,12 @@ function write_figure4_projection(
     end
     return (
         projection=projection,
-        grid=grid_path,
-        sources=source_path,
-        path_kpoints=kpoint_path,
+        momentum_weights=grid_path,
+        band_weights=source_path,
+        path_momenta=kpoint_path,
         path_energies=energy_path,
         path_metadata=path_metadata,
-        metadata=metadata_path,
+        summary=metadata_path,
     )
 end
 

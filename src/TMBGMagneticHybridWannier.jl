@@ -7,7 +7,7 @@ include("TMBGMagneticGeometry.jl")
 include("TMBGIntrinsicIdealGeometry.jl")
 include("TMBGIdealComponent.jl")
 include("TMBGSymmetricGaugeProjection.jl")
-include("TMBGFigure4Projection.jl")
+include("TMBGIdealComponentProjection.jl")
 
 using .TMBGMagneticHW
 using .TMBGProjection
@@ -16,7 +16,7 @@ using .TMBGMagneticGeometry
 using .TMBGIntrinsicIdealGeometry
 using .TMBGIdealComponent
 using .TMBGSymmetricGaugeProjection
-using .TMBGFigure4Projection
+using .TMBGIdealComponentProjection
 
 export TMBGMagneticHW,
        TMBGProjection,
@@ -25,6 +25,6 @@ export TMBGMagneticHW,
        TMBGIntrinsicIdealGeometry,
        TMBGIdealComponent,
        TMBGSymmetricGaugeProjection,
-       TMBGFigure4Projection
+       TMBGIdealComponentProjection
 
 end
