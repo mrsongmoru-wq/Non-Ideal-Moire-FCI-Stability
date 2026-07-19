@@ -92,6 +92,28 @@ grid `lg`; the validated calculation uses `lg=11`, or `6*11^2=726` local
 plane-wave orbitals at each momentum.  Magnetic-basis convergence is
 controlled separately by `smax=5`.
 
+## Code flow used by the calculation
+
+There is only one numerical entry point:
+`examples/run_tmbg_stability_check.jl`.  It calls the source files in the
+following order; these are stages of one calculation, not alternative
+methods.
+
+| Stage | Source code and main call | Result |
+| --- | --- | --- |
+| Continuum model | `TMBGZeroField.jl`, `WangContinuum.jl`; `build_tmbg_wang` | tMBG Hamiltonian, lattice, plane-wave basis, and field coupling |
+| Hybrid-Wannier basis | `TMBGHybridWannier.jl`; called inside `build_magnetic_hw` | Six-band zero-field hybrid-Wannier basis |
+| Magnetic spectrum | `TMBGMagneticHW.jl`; `build_magnetic_hw` | Nonorthogonal magnetic problem, orthonormalized subbands, and `magnetic_spectrum.csv` |
+| Multiband quantum geometry | `TMBGCommonBasis.jl`, `TMBGMagneticGeometry.jl`, `TMBGIntrinsicIdealGeometry.jl`, and `TMBGIdealComponent.jl`; `compute_ideal_component` | Berry curvature, Cartesian quantum metric, trace condition, and overlap diagnostics |
+| Momentum-resolved ideal component | `TMBGProjection.jl`, `TMBGSymmetricGaugeProjection.jl`, and `TMBGIdealComponentProjection.jl`; `write_ideal_component_projection` | Common-basis zero-field projection and C3-restored ideal-component distribution |
+
+`src/TMBGMagneticHybridWannier.jl` only assembles these modules into the Julia
+package.  The two Python files do not perform any physics calculation:
+`plot_magnetic_spectrum.py` reads `magnetic_spectrum.csv`, while
+`plot_ideal_component_projection.py` reads the exported projection tables.
+Thus a complete numerical rerun requires only the Julia entry point; plotting
+is a separate final step.
+
 ## Reproduce the validated tMBG case
 
 Julia 1.10 or newer is recommended.
@@ -207,25 +229,6 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 The tests cover lattice-coordinate conventions, continuum-basis equivalence,
 magnetic overlap and Hamiltonian hermiticity, Cartesian metric reconstruction,
 multiband polar-frame covariance, and C3 group projection.
-
-## Repository layout
-
-- `examples/run_tmbg_stability_check.jl`: the only numerical workflow entry
-  point.
-- `examples/plot_magnetic_spectrum.py`: magnetic-spectrum plotting program.
-- `examples/plot_ideal_component_projection.py`: ideal-component plotting
-  program.
-- `src/TMBGZeroField.jl` and `src/WangContinuum.jl`: continuum Hamiltonian and
-  magnetic coupling conventions.
-- `src/TMBGHybridWannier.jl`: hybrid-Wannier construction.
-- `src/TMBGMagneticHW.jl`: nonorthogonal magnetic basis and spectrum.
-- `src/TMBGMagneticGeometry.jl` and `src/TMBGCommonBasis.jl`: common-basis
-  lifting and Cartesian geometry.
-- `src/TMBGIdealComponent.jl`: multiband polar-frame trace-condition
-  calculation and overlap export.
-- `src/TMBGSymmetricGaugeProjection.jl` and
-  `src/TMBGIdealComponentProjection.jl`: gauge conversion and
-  momentum-resolved ideal-component projection.
 
 ## Method references
 
