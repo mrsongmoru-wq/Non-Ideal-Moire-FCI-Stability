@@ -1,4 +1,4 @@
-# Non-Ideal Band FCI Stability
+# Non-Ideal Moiré FCI Stability
 
 ## Purpose and physical background
 
