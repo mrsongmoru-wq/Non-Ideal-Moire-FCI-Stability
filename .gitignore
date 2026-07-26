@@ -3,6 +3,7 @@
 /Manifest.toml
 *.jls
 *.npz
+!reference/tmbg_pq1_20_ll_nll400_40x16/quantum_geometry.npz
 __pycache__/
 *.pyc
 
