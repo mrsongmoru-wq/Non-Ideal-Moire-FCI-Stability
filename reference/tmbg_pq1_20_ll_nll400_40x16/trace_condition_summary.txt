@@ -1,0 +1,17 @@
+output=reference/tmbg_pq1_20_ll_nll400_40x16/quantum_geometry.npz
+LL_input_flux=1/10
+physical_moire_flux=1/20
+band_interval_1based=82:82
+projector_rank=1
+mesh=40x16
+NLL=400
+geometry_backend=block
+quick_smoke_test=False
+mean_energy_meV=25.0470775835
+chern=-1
+eta=0.098808121157
+integrated_trace=6.38199342834
+integrated_abs_curvature=6.28318530718
+trace_violation_min=807.158099852
+trace_violation_max=807.245266982
+geometry_seconds=1.932
