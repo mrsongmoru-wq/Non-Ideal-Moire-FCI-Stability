@@ -218,6 +218,14 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 The LL installation checks shown above additionally exercise both new Python
 entry points.
 
+## Contact
+
+For any academic questions regarding this code or the associated article,
+please contact:
+
+- [mrsong@semi.ac.cn](mailto:mrsong@semi.ac.cn)
+- [Flyingmrsong@163.com](mailto:Flyingmrsong@163.com)
+
 ## Citation
 
 If you find this code useful, please cite the associated article [1]:
