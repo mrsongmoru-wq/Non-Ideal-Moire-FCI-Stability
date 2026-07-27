@@ -3,7 +3,8 @@
 This repository provides a single-particle screening workflow for a question
 that normally requires a much more expensive many-body calculation: does a
 realistic, non-ideal moiré band contain a geometrically favorable component
-that can support a fractional Chern insulator (FCI)?
+that can support a fractional Chern insulator (FCI)?  The workflow was
+developed for the tMBG study in Ref. [1].
 
 The calculation uses a weak perpendicular magnetic field as a resolution
 probe.  The field separates components hidden inside the same zero-field band;
@@ -19,11 +20,13 @@ many-body analysis.
 
 ## Why non-ideal bands need a component-resolved test
 
-Exact ideal geometry is a useful reference, but realistic continuum models
-include relaxation, remote hopping, displacement fields, and substrate
-potentials.  These effects make the Berry curvature and Quantum Metric
-nonuniform, so testing only globally ideal bands would exclude much of the
-physically relevant parameter space.
+The exact Landau-level mapping and the vortexability construction identify
+the geometric structure that makes ideal Chern bands favorable for FCI
+wavefunctions [2,3].  Realistic continuum models, however, include
+relaxation, remote hopping, displacement fields, and substrate potentials.
+These effects make the Berry curvature and Quantum Metric nonuniform, so
+testing only globally ideal bands would exclude much of the physically
+relevant parameter space.
 
 A single global geometry score can also hide internal structure.  The tMBG
 case studied here contains a near-ideal component embedded in a non-ideal
@@ -42,7 +45,7 @@ field.
 
 The hybrid-Wannier calculation does not read LL eigenstates, LL geometry, or a
 fitted LL wavefunction.  The LL implementation is included as a conventional
-Landau-level-expansion benchmark for methodological comparison.
+Landau-level-expansion benchmark [2] for methodological comparison.
 
 ## Quick start: primary hybrid-Wannier workflow
 
@@ -126,7 +129,8 @@ and integrated trace-condition measures in one portable `.npz` file.
 
 ## Validated tMBG example
 
-The repository fixes the paper example at twist angle `1.04 deg`,
+The repository reproduces the tMBG example analyzed in Ref. [1] at twist
+angle `1.04 deg`,
 `kappa=0.70`, displacement potential `50 meV`, hBN sublattice potential
 `-30 meV`, and physical flux `p/q=1/20`.
 
@@ -168,38 +172,39 @@ Technical material:
 ## Scope, origin, and license
 
 The implemented and validated material backend is twisted monolayer-bilayer
-graphene (tMBG).  The architecture can be extended to other continuum-model
-moiré systems by supplying their Hamiltonian, lattice conventions, local
-orbital basis, field coupling, and reciprocal-space sewing maps.
+graphene (tMBG), using the continuum-Hamiltonian structure of Ref. [6].  The
+architecture can be extended to other continuum-model moiré systems by
+supplying their Hamiltonian, lattice conventions, local orbital basis, field
+coupling, and reciprocal-space sewing maps.
 
 The hybrid-Wannier implementation is based on Xiaoyu Wang's
 [`Hofstadter-TBG`](https://github.com/xywang2017/Hofstadter-TBG) project and
-the Wang--Vafek magnetic-translation construction.  This repository adds the
-tMBG continuum model, generalized nonorthogonal solve, common-basis lifting,
-multiband geometry, overlap diagnostics, and zero-field component projection.
-The conventional LL implementation is supplied as an independent comparison
-reference.
+the Wang--Vafek hybrid-Wannier magnetic-translation construction [4,5].  This
+repository adds the tMBG continuum model, generalized nonorthogonal solve,
+common-basis lifting, multiband geometry, overlap diagnostics, and zero-field
+component projection.  The conventional LL implementation is supplied as an
+independent comparison reference.
 
 The code is distributed under GNU GPL v3.0; see `LICENSE`.
 
-## Associated article and method references
+## References
 
-- M. Song and K. Chang,
+- [1] M. Song and K. Chang,
   *[Fractional Chern Insulators Transition in Non-ideal Flat Bands of Twisted
   Mono-bilayer Graphene](https://arxiv.org/abs/2511.12231)*,
   arXiv:2511.12231 (2025).
-- X. Wang and O. Vafek, *Narrow bands in magnetic field and strong-coupling
-  Hofstadter spectra*, Phys. Rev. B **106**, L121111 (2022).
-- X. Wang and O. Vafek, *Revisiting Bloch electrons in a magnetic field:
-  Hofstadter physics via hybrid Wannier states*, Phys. Rev. B **108**, 245109
-  (2023).
-- J. Wang, J. Cano, A. J. Millis, Z. Liu, and B. Yang, *Exact Landau Level
+- [2] J. Wang, J. Cano, A. J. Millis, Z. Liu, and B. Yang, *Exact Landau Level
   Description of Geometry and Interaction in a Flatband*, Phys. Rev. Lett.
   **127**, 246403 (2021).
-- P. J. Ledwith, A. Vishwanath, and D. E. Parker, *Vortexability: A Unifying
+- [3] P. J. Ledwith, A. Vishwanath, and D. E. Parker, *Vortexability: A Unifying
   Criterion for Ideal Fractional Chern Insulators*, Phys. Rev. B **108**,
   205144 (2023).
-- Z. Ma *et al.*, *Topological flat bands in twisted trilayer graphene*,
+- [4] X. Wang and O. Vafek, *Narrow bands in magnetic field and strong-coupling
+  Hofstadter spectra*, Phys. Rev. B **106**, L121111 (2022).
+- [5] X. Wang and O. Vafek, *Revisiting Bloch electrons in a magnetic field:
+  Hofstadter physics via hybrid Wannier states*, Phys. Rev. B **108**, 245109
+  (2023).
+- [6] Z. Ma *et al.*, *Topological flat bands in twisted trilayer graphene*,
   Science Bulletin **66**, 18–22 (2021).
 
 BibTeX entries are collected in `CITATION.bib`.
@@ -212,3 +217,21 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 
 The LL installation checks shown above additionally exercise both new Python
 entry points.
+
+## Citation
+
+If you find this code useful, please cite the associated article [1]:
+
+```bibtex
+@misc{SongChang2025FCITransition,
+  title        = {Fractional Chern Insulators Transition in Non-ideal Flat
+                  Bands of Twisted Mono-bilayer Graphene},
+  author       = {Song, Moru and Chang, Kai},
+  year         = {2025},
+  eprint       = {2511.12231},
+  archivePrefix = {arXiv},
+  primaryClass = {cond-mat.mes-hall},
+  doi          = {10.48550/arXiv.2511.12231},
+  url          = {https://arxiv.org/abs/2511.12231}
+}
+```
